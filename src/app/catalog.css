@@ -1,0 +1,8 @@
+.product-photo{position:relative;z-index:1;width:78%;height:78%;object-fit:contain;border-radius:5px;mix-blend-mode:multiply}
+.product-emoji{position:absolute;inset:0;display:grid;place-items:center;font-size:4rem;pointer-events:none}
+.product-photo{object-fit:cover;mix-blend-mode:normal}
+.google-signin{width:100%;height:48px;display:flex;align-items:center;justify-content:center;gap:12px;background:#fff;border:1px solid #d9ddd8;border-radius:9px;color:#252922;font:inherit;font-weight:650;cursor:pointer;margin-top:4px}
+.google-signin:disabled{opacity:.6;cursor:wait}
+.google-icon{width:18px;height:18px;flex:none}
+.account-divider{display:flex;align-items:center;gap:12px;color:#858a83;font-size:12px;margin:18px 0}
+.account-divider:before,.account-divider:after{content:"";height:1px;background:#e6e8e3;flex:1}
