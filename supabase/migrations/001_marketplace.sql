@@ -178,7 +178,11 @@ grant execute on function public.confirm_marketplace_payment(uuid,jsonb) to serv
 grant execute on function public.cancel_pending_marketplace_order(uuid) to service_role;
 
 insert into public.categories(name,slug) values
-('Electronics','electronics'),('Fashion','fashion'),('Home & Living','home-living'),('Books & Stationery','books-stationery')
+('Electronics','electronics'),('Phones & Tablets','phones-tablets'),('Computers & Accessories','computers-accessories'),
+('Fashion','fashion'),('Beauty & Personal Care','beauty-personal-care'),('Health & Wellness','health-wellness'),
+('Home & Living','home-living'),('Kitchen & Dining','kitchen-dining'),('Groceries & Food','groceries-food'),
+('Baby, Kids & Toys','baby-kids-toys'),('Sports & Fitness','sports-fitness'),('Books & Stationery','books-stationery'),
+('Automotive & Tools','automotive-tools')
 on conflict do nothing;
 
 insert into public.products(id,owner_type,name,slug,description,category_id,price_ngn,stock,status,featured)

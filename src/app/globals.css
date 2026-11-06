@@ -22,6 +22,10 @@
 
 .account-details dl{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:12px;margin:14px 0 0}.account-details dl>div{min-width:0;padding:12px;background:#f8fafc;border:1px solid #e8edf3;border-radius:6px}.account-details dt{color:#7b8290;font-size:9px;margin-bottom:5px}.account-details dd{margin:0;color:#263446;font-size:11px;font-weight:600;overflow-wrap:anywhere}@media(max-width:700px){.account-details dl{grid-template-columns:1fr}}
 
+.category-card>b{max-width:100%;line-height:1.3}.category-card{min-width:0}
+.product-controls{min-width:0}.tabs{min-width:0;max-width:min(520px,58vw);overflow-x:auto;overflow-y:hidden;white-space:nowrap;scrollbar-width:thin}.tabs button{flex:0 0 auto}
+@media(max-width:700px){.category-card{height:124px}.tabs{max-width:calc(100vw - 110px);flex:1}.product-controls{min-width:0}.product-controls select{flex:0 0 auto}}
+
 /* Small-screen and Android phone refinements */
 html,body{width:100%;min-width:320px;overflow-x:hidden}
 img,svg{max-width:100%}

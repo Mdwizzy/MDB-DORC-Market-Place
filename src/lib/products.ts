@@ -9,5 +9,20 @@ export const products: Product[] = [
   { id: "10000000-0000-4000-8000-000000000007", name: "Daily Notes Journal Set", category: "Books & Stationery", price: 5500, rating: 4.9, reviews: 36, stock: 32, seller: "MDB-DORC", emoji: "📓", tone: "rose", imageUrl: "https://images.unsplash.com/photo-1517842645767-c639042777db?auto=format&fit=crop&w=900&q=85" },
   { id: "10000000-0000-4000-8000-000000000008", name: "Classic Analog Wristwatch", category: "Fashion", price: 22000, rating: 4.3, reviews: 6, stock: 5, seller: "MDB-DORC", emoji: "⌚", tone: "slate", imageUrl: "https://images.unsplash.com/photo-1523275335684-37898b6baf30?auto=format&fit=crop&w=900&q=85" },
 ];
-export const categories = ["All products", "Electronics", "Fashion", "Home & Living", "Books & Stationery"];
+export const marketplaceCategories = [
+  { name: "Electronics", slug: "electronics", emoji: "🎧", tone: "cat-lav" },
+  { name: "Phones & Tablets", slug: "phones-tablets", emoji: "📱", tone: "cat-mint" },
+  { name: "Computers & Accessories", slug: "computers-accessories", emoji: "💻", tone: "cat-lemon" },
+  { name: "Fashion", slug: "fashion", emoji: "🧢", tone: "cat-peach" },
+  { name: "Beauty & Personal Care", slug: "beauty-personal-care", emoji: "💄", tone: "cat-lav" },
+  { name: "Health & Wellness", slug: "health-wellness", emoji: "🩺", tone: "cat-mint" },
+  { name: "Home & Living", slug: "home-living", emoji: "🪴", tone: "cat-mint" },
+  { name: "Kitchen & Dining", slug: "kitchen-dining", emoji: "🍽️", tone: "cat-lemon" },
+  { name: "Groceries & Food", slug: "groceries-food", emoji: "🥑", tone: "cat-peach" },
+  { name: "Baby, Kids & Toys", slug: "baby-kids-toys", emoji: "🧸", tone: "cat-lav" },
+  { name: "Sports & Fitness", slug: "sports-fitness", emoji: "🏋️", tone: "cat-mint" },
+  { name: "Books & Stationery", slug: "books-stationery", emoji: "✏️", tone: "cat-lemon" },
+  { name: "Automotive & Tools", slug: "automotive-tools", emoji: "🔧", tone: "cat-peach" },
+];
+export const categories = ["All products", ...marketplaceCategories.map((category) => category.name)];
 export const formatNaira = (amount: number) => new Intl.NumberFormat("en-NG", { style: "currency", currency: "NGN", maximumFractionDigits: 0 }).format(amount);
