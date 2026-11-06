@@ -1,0 +1,21 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="140" height="32" viewBox="0 0 140 32" role="img" aria-labelledby="title">
+  <title id="title">MDB-DORC Market Place</title>
+  <g transform="matrix(.19 0 0 .19 -31.16 -20.9)">
+    <circle cx="282" cy="114" r="13" fill="#15345e"/>
+    <path d="M278 137 C266 146 254 161 237 162 C228 163 218 162 210 162" fill="none" stroke="#15345e" stroke-width="16" stroke-linecap="round" stroke-linejoin="round"/>
+    <path d="M281 139 C300 146 319 155 339 162 L347 162" fill="none" stroke="#15345e" stroke-width="15" stroke-linecap="round" stroke-linejoin="round"/>
+    <path d="M274 151 C253 168 240 183 218 198 C200 209 183 214 164 219 C197 217 229 207 254 190 C267 181 277 169 284 159" fill="#15345e" stroke="#15345e" stroke-width="2" stroke-linejoin="round"/>
+    <path d="M285 150 C272 165 269 176 282 185 C291 192 302 194 300 201 C297 211 275 224 253 235" fill="none" stroke="#15345e" stroke-width="14" stroke-linecap="round" stroke-linejoin="round"/>
+    <path d="M196 229 C179 245 190 264 213 266 C254 270 303 234 329 226 C341 222 350 224 359 231" fill="none" stroke="#356bd7" stroke-width="9" stroke-linecap="round"/>
+    <path d="M339 162 L348 162 L356 184" fill="none" stroke="#356bd7" stroke-width="8" stroke-linecap="round" stroke-linejoin="round"/>
+    <path d="M355 181 L437 181 L431 222 Q430 229 423 229 L365 229 Z" fill="#356bd7"/>
+    <path d="M370 185 L376 225 M390 183 L394 227 M412 183 L409 227 M360 197 L435 197 M362 211 L433 211" fill="none" stroke="#ffffff" stroke-width="4" stroke-linecap="round"/>
+    <path d="M364 236 L427 236" stroke="#356bd7" stroke-width="7" stroke-linecap="round"/>
+    <circle cx="379" cy="252" r="10" fill="#356bd7"/><circle cx="414" cy="252" r="10" fill="#356bd7"/>
+    <path d="M356 110 C359 119 362 122 371 125 C362 128 359 131 356 140 C353 131 350 128 341 125 C350 122 353 119 356 110Z" fill="#356bd7"/>
+    <path d="M403 143 C405 150 408 153 415 155 C408 157 405 160 403 167 C401 160 398 157 391 155 C398 153 401 150 403 143Z" fill="#356bd7"/>
+    <path d="M422 110 C424 115 426 117 431 119 C426 121 424 123 422 128 C420 123 418 121 413 119 C418 117 420 115 422 110Z" fill="#356bd7"/>
+  </g>
+  <text x="60" y="14" fill="#15345e" font-family="Arial, sans-serif" font-size="13" font-weight="700" letter-spacing=".55">MDB-DORC</text>
+  <text x="60" y="26" fill="#356bd7" font-family="Arial, sans-serif" font-size="7.5" font-weight="700" letter-spacing="1.55">MARKET PLACE</text>
+</svg>

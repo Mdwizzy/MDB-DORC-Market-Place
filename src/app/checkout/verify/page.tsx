@@ -1,2 +1,3 @@
 import PaymentResult from "@/components/PaymentResult";
-export default async function VerifyPage({ searchParams }: { searchParams: Promise<{ reference?: string; trxref?: string }> }) { const params=await searchParams; return <main className="account-page"><a className="brand" href="/"><span className="brand-mark">M</span><span><b>MDB-DORC</b><small>MARKET PLACE</small></span></a><PaymentResult reference={params.reference ?? params.trxref ?? ""} /></main>; }
+import BrandLogo from "@/components/BrandLogo";
+export default async function VerifyPage({ searchParams }: { searchParams: Promise<{ reference?: string; trxref?: string }> }) { const params=await searchParams; return <main className="account-page"><a className="brand" href="/"><BrandLogo/></a><PaymentResult reference={params.reference ?? params.trxref ?? ""} /></main>; }

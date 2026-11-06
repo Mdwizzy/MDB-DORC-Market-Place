@@ -1,6 +1,7 @@
 import AccountForm from "@/components/AccountForm";
 import { redirect } from "next/navigation";
 import { createSupabaseServerClient } from "@/lib/supabase/server";
+import BrandLogo from "@/components/BrandLogo";
 
 export default async function AccountPage() {
   let isSignedIn = false;
@@ -12,5 +13,5 @@ export default async function AccountPage() {
     // Keep the sign-in page available when Supabase has not been configured.
   }
   if (isSignedIn) redirect("/dashboard");
-  return <main className="account-page"><a className="brand" href="/"><span className="brand-mark">M</span><span><b>MDB-DORC</b><small>MARKET PLACE</small></span></a><AccountForm /></main>;
+  return <main className="account-page"><a className="brand" href="/"><BrandLogo/></a><AccountForm /></main>;
 }
