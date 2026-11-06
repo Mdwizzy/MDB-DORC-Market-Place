@@ -185,21 +185,6 @@ insert into public.categories(name,slug) values
 ('Automotive & Tools','automotive-tools')
 on conflict do nothing;
 
-insert into public.products(id,owner_type,name,slug,description,category_id,price_ngn,stock,status,featured)
-select seed.id,'platform',seed.name,seed.slug,'A curated find from MDB-DORC Market Place.',c.id,seed.price,seed.stock,'approved',seed.featured
-from (values
- ('10000000-0000-4000-8000-000000000001'::uuid,'Classic Everyday Backpack','classic-everyday-backpack','fashion',18500,18,true),
- ('10000000-0000-4000-8000-000000000002'::uuid,'Wireless Bluetooth Earbuds','wireless-bluetooth-earbuds','electronics',12500,12,true),
- ('10000000-0000-4000-8000-000000000003'::uuid,'Stainless Steel Water Bottle','stainless-steel-water-bottle','home-living',8500,25,false),
- ('10000000-0000-4000-8000-000000000004'::uuid,'Everyday Tote Bag','everyday-tote-bag','fashion',7000,9,false),
- ('10000000-0000-4000-8000-000000000005'::uuid,'Portable Desk Lamp','portable-desk-lamp','home-living',15000,7,false),
- ('10000000-0000-4000-8000-000000000006'::uuid,'Insulated Lunch Box','insulated-lunch-box','home-living',9500,14,false),
- ('10000000-0000-4000-8000-000000000007'::uuid,'Daily Notes Journal Set','daily-notes-journal-set','books-stationery',5500,32,true),
- ('10000000-0000-4000-8000-000000000008'::uuid,'Classic Analog Wristwatch','classic-analog-wristwatch','fashion',22000,5,false)
-) as seed(id,name,slug,category_slug,price,stock,featured)
-join public.categories c on c.slug=seed.category_slug
-on conflict(id) do nothing;
-
 insert into storage.buckets(id,name,public,file_size_limit,allowed_mime_types)
 values ('product-images','product-images',false,5242880,array['image/jpeg','image/png','image/webp'])
 on conflict(id) do nothing;
