@@ -18,7 +18,7 @@ export default function AccountForm() {
     setBusy(true); setMessage("");
     try {
       const next = new URLSearchParams(window.location.search).get("next");
-      const destination = next === "checkout" ? "/?checkout=1" : "/dashboard";
+      const destination = next === "checkout" ? "/?checkout=1&welcome=1" : "/?welcome=1";
       const supabase = createSupabaseBrowserClient();
       const { error } = await supabase.auth.signInWithOAuth({
         provider: "google",

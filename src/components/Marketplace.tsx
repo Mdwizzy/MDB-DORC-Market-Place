@@ -19,7 +19,19 @@ export default function Marketplace({initialProducts}:{initialProducts:Product[]
   const [isCheckingOut, setIsCheckingOut] = useState(false);
   useEffect(() => { try { const saved = localStorage.getItem("mdb-marketplace-cart"); if (saved) setCart(JSON.parse(saved)); } catch { localStorage.removeItem("mdb-marketplace-cart"); } }, []);
   useEffect(() => { try { localStorage.setItem("mdb-marketplace-cart", JSON.stringify(cart)); } catch { /* The in-memory cart still works if storage is unavailable. */ } }, [cart]);
-  useEffect(() => { if (new URLSearchParams(window.location.search).get("checkout") === "1") { setCartOpen(true); window.history.replaceState({}, "", "/"); } }, []);
+  useEffect(() => {
+    const params = new URLSearchParams(window.location.search);
+    const isCheckoutReturn = params.get("checkout") === "1";
+    const isGoogleSignInReturn = params.get("welcome") === "1";
+    if (isCheckoutReturn) setCartOpen(true);
+    if (isGoogleSignInReturn) notify("Google sign-in successful. Your account is ready.");
+    if (isCheckoutReturn || isGoogleSignInReturn) {
+      params.delete("checkout");
+      params.delete("welcome");
+      const remainingQuery = params.toString();
+      window.history.replaceState({}, "", `${window.location.pathname}${remainingQuery ? `?${remainingQuery}` : ""}${window.location.hash}`);
+    }
+  }, []);
   const filtered = useMemo(() => {
     let list = initialProducts.filter(p => (category === "All products" || p.category === category) && p.name.toLowerCase().includes(query.toLowerCase()));
     if (sort === "Price: low to high") list = [...list].sort((a,b) => a.price-b.price);
