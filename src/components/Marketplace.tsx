@@ -10,6 +10,8 @@ const CartIcon = () => <svg className="action-icon" viewBox="0 0 24 24" fill="no
 
 export default function Marketplace({initialProducts,accountHref,accountUser}:{initialProducts:Product[];accountHref:string;accountUser:{id:string;name:string;email:string;avatarUrl?:string}|null}) {
   const cartStorageKey=accountUser?`mdb-marketplace-cart:${accountUser.id}`:null;
+  const guestCartStorageKey="mdb-marketplace-guest-cart";
+  const activeCartStorageKey=cartStorageKey??guestCartStorageKey;
   const favoriteStorageKey=accountUser?`mdb-marketplace-favorites:${accountUser.id}`:null;
   const [category, setCategory] = useState("All products");
   const [query, setQuery] = useState("");
@@ -25,8 +27,8 @@ export default function Marketplace({initialProducts,accountHref,accountUser}:{i
   const [toast, setToast] = useState("");
   const [sort, setSort] = useState("Featured");
   const [isCheckingOut, setIsCheckingOut] = useState(false);
-  useEffect(() => { setCartLoadedFor(null); try { const saved = cartStorageKey?localStorage.getItem(cartStorageKey):null; if (saved) { const available = new Map(initialProducts.map((product) => [product.id, product])); const parsed = JSON.parse(saved) as CartLine[]; setCart(parsed.filter((line) => available.has(line.product?.id)).map((line) => ({ product: available.get(line.product.id)!, quantity: Math.min(available.get(line.product.id)!.stock, Math.max(1, Number(line.quantity)||1)) }))); } else setCart([]); } catch { if(cartStorageKey)localStorage.removeItem(cartStorageKey);setCart([]); } finally { setCartLoadedFor(cartStorageKey); } }, [initialProducts, cartStorageKey]);
-  useEffect(() => { if (!cartStorageKey||cartLoadedFor!==cartStorageKey) return; try { localStorage.setItem(cartStorageKey, JSON.stringify(cart)); } catch { /* The in-memory cart still works if storage is unavailable. */ } }, [cart, cartLoadedFor, cartStorageKey]);
+  useEffect(() => { setCartLoadedFor(null); try { const available = new Map(initialProducts.map((product) => [product.id, product])); const readLines=(key:string):CartLine[]=>{const raw=localStorage.getItem(key);if(!raw)return[];const parsed=JSON.parse(raw) as CartLine[];return Array.isArray(parsed)?parsed:[];}; const saved=readLines(activeCartStorageKey);const guest=cartStorageKey?readLines(guestCartStorageKey):[];const merged=new Map<string,CartLine>();for(const line of [...saved,...guest]){const product=available.get(line.product?.id);if(!product)continue;const quantity=Math.min(product.stock,Math.max(1,Number(line.quantity)||1));const previous=merged.get(product.id);merged.set(product.id,{product,quantity:Math.min(product.stock,quantity+(previous?.quantity??0))});}setCart([...merged.values()]);if(cartStorageKey)localStorage.removeItem(guestCartStorageKey); } catch { localStorage.removeItem(activeCartStorageKey);if(cartStorageKey)localStorage.removeItem(guestCartStorageKey);setCart([]); } finally { setCartLoadedFor(activeCartStorageKey); } }, [initialProducts, activeCartStorageKey, cartStorageKey]);
+  useEffect(() => { if (cartLoadedFor!==activeCartStorageKey) return; try { localStorage.setItem(activeCartStorageKey, JSON.stringify(cart)); } catch { /* The in-memory cart still works if storage is unavailable. */ } }, [cart, cartLoadedFor, activeCartStorageKey]);
   useEffect(() => { setFavoritesLoadedFor(null); try { const saved=favoriteStorageKey?localStorage.getItem(favoriteStorageKey):null; const parsed=saved?JSON.parse(saved):[]; setFavorites(new Set(Array.isArray(parsed)?parsed.filter((id):id is string=>typeof id==="string"):[])); } catch { if(favoriteStorageKey)localStorage.removeItem(favoriteStorageKey); setFavorites(new Set()); } finally { setFavoritesLoadedFor(favoriteStorageKey); } }, [favoriteStorageKey]);
   useEffect(() => { if(!favoriteStorageKey||favoritesLoadedFor!==favoriteStorageKey)return;try{localStorage.setItem(favoriteStorageKey,JSON.stringify([...favorites]));}catch{/* Favourites still work for this page view if storage is unavailable. */} },[favorites,favoritesLoadedFor,favoriteStorageKey]);
   useEffect(() => {
@@ -69,7 +71,7 @@ export default function Marketplace({initialProducts,accountHref,accountUser}:{i
     } catch { notify("Checkout is temporarily unavailable"); }
     finally { setIsCheckingOut(false); }
   };
-  const buyNow = () => { if (!selectedProduct) return; const purchase = { product: selectedProduct, quantity: detailQuantity }; setCart([purchase]); if(cartStorageKey)try{localStorage.setItem(cartStorageKey,JSON.stringify([purchase]));}catch{} setSelectedProduct(null); void checkout([purchase]); };
+  const buyNow = () => { if (!selectedProduct) return; const purchase = { product: selectedProduct, quantity: detailQuantity }; setCart([purchase]); try{localStorage.setItem(activeCartStorageKey,JSON.stringify([purchase]));}catch{} setSelectedProduct(null); void checkout([purchase]); };
 
   return <main>
     <div className="announcement"><span>✦</span> Your DORC marketplace <span className="announce-right">Convenient pickup · Secure payments · Local sellers</span></div>
