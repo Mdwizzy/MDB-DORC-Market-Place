@@ -6,13 +6,14 @@ export const dynamic = "force-dynamic";
 export default async function Home() {
   let catalog: Product[] = [];
   let accountHref = "/account";
-  let accountUser: { name: string; email: string; avatarUrl?: string } | null = null;
+  let accountUser: { id: string; name: string; email: string; avatarUrl?: string } | null = null;
   try {
     const db = await createSupabaseServerClient();
     const { data: { user } } = await db.auth.getUser();
     if (user) {
       accountHref = "/dashboard";
       accountUser = {
+        id: user.id,
         name: String(user.user_metadata?.full_name ?? user.user_metadata?.name ?? user.email?.split("@")[0] ?? "Account"),
         email: user.email ?? "",
         avatarUrl: typeof (user.user_metadata?.avatar_url ?? user.user_metadata?.picture) === "string" ? user.user_metadata?.avatar_url ?? user.user_metadata?.picture : undefined,

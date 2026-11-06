@@ -8,11 +8,12 @@ const Icon = ({ children }: { children: React.ReactNode }) => <span className="i
 const AccountIcon = () => <svg className="action-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true"><circle cx="12" cy="8" r="3.5"/><path d="M5 20c.7-3.4 3.2-5.2 7-5.2s6.3 1.8 7 5.2"/></svg>;
 const CartIcon = () => <svg className="action-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true"><path d="M3 4h2l2.2 11.1a2 2 0 0 0 2 1.6h7.9a2 2 0 0 0 1.9-1.4L21 8H6"/><circle cx="9.5" cy="20" r="1"/><circle cx="17.5" cy="20" r="1"/></svg>;
 
-export default function Marketplace({initialProducts,accountHref,accountUser}:{initialProducts:Product[];accountHref:string;accountUser:{name:string;email:string;avatarUrl?:string}|null}) {
+export default function Marketplace({initialProducts,accountHref,accountUser}:{initialProducts:Product[];accountHref:string;accountUser:{id:string;name:string;email:string;avatarUrl?:string}|null}) {
+  const cartStorageKey=accountUser?`mdb-marketplace-cart:${accountUser.id}`:null;
   const [category, setCategory] = useState("All products");
   const [query, setQuery] = useState("");
   const [cart, setCart] = useState<CartLine[]>([]);
-  const [cartReady, setCartReady] = useState(false);
+  const [cartLoadedFor, setCartLoadedFor] = useState<string|null>(null);
   const [cartOpen, setCartOpen] = useState(false);
   const [selectedProduct, setSelectedProduct] = useState<Product|null>(null);
   const [detailQuantity, setDetailQuantity] = useState(1);
@@ -21,8 +22,8 @@ export default function Marketplace({initialProducts,accountHref,accountUser}:{i
   const [toast, setToast] = useState("");
   const [sort, setSort] = useState("Featured");
   const [isCheckingOut, setIsCheckingOut] = useState(false);
-  useEffect(() => { try { const saved = localStorage.getItem("mdb-marketplace-cart"); if (saved) { const available = new Map(initialProducts.map((product) => [product.id, product])); const parsed = JSON.parse(saved) as CartLine[]; setCart(parsed.filter((line) => available.has(line.product?.id)).map((line) => ({ product: available.get(line.product.id)!, quantity: Math.min(available.get(line.product.id)!.stock, Math.max(1, Number(line.quantity)||1)) }))); } } catch { localStorage.removeItem("mdb-marketplace-cart"); } finally { setCartReady(true); } }, [initialProducts]);
-  useEffect(() => { if (!cartReady) return; try { localStorage.setItem("mdb-marketplace-cart", JSON.stringify(cart)); } catch { /* The in-memory cart still works if storage is unavailable. */ } }, [cart, cartReady]);
+  useEffect(() => { setCartLoadedFor(null); try { const saved = cartStorageKey?localStorage.getItem(cartStorageKey):null; if (saved) { const available = new Map(initialProducts.map((product) => [product.id, product])); const parsed = JSON.parse(saved) as CartLine[]; setCart(parsed.filter((line) => available.has(line.product?.id)).map((line) => ({ product: available.get(line.product.id)!, quantity: Math.min(available.get(line.product.id)!.stock, Math.max(1, Number(line.quantity)||1)) }))); } else setCart([]); } catch { if(cartStorageKey)localStorage.removeItem(cartStorageKey);setCart([]); } finally { setCartLoadedFor(cartStorageKey); } }, [initialProducts, cartStorageKey]);
+  useEffect(() => { if (!cartStorageKey||cartLoadedFor!==cartStorageKey) return; try { localStorage.setItem(cartStorageKey, JSON.stringify(cart)); } catch { /* The in-memory cart still works if storage is unavailable. */ } }, [cart, cartLoadedFor, cartStorageKey]);
   useEffect(() => {
     const params = new URLSearchParams(window.location.search);
     const isCheckoutReturn = params.get("checkout") === "1";
@@ -62,7 +63,7 @@ export default function Marketplace({initialProducts,accountHref,accountUser}:{i
     } catch { notify("Checkout is temporarily unavailable"); }
     finally { setIsCheckingOut(false); }
   };
-  const buyNow = () => { if (!selectedProduct) return; const purchase = { product: selectedProduct, quantity: detailQuantity }; setCart([purchase]); try{localStorage.setItem("mdb-marketplace-cart",JSON.stringify([purchase]));}catch{} setSelectedProduct(null); void checkout([purchase]); };
+  const buyNow = () => { if (!selectedProduct) return; const purchase = { product: selectedProduct, quantity: detailQuantity }; setCart([purchase]); if(cartStorageKey)try{localStorage.setItem(cartStorageKey,JSON.stringify([purchase]));}catch{} setSelectedProduct(null); void checkout([purchase]); };
 
   return <main>
     <div className="announcement"><span>✦</span> Your DORC marketplace <span className="announce-right">Convenient pickup · Secure payments · Local sellers</span></div>
