@@ -1,2 +1,16 @@
 import AccountForm from "@/components/AccountForm";
-export default function AccountPage() { return <main className="account-page"><a className="brand" href="/"><span className="brand-mark">M</span><span><b>MDB-DORC</b><small>MARKET PLACE</small></span></a><AccountForm /></main>; }
+import { redirect } from "next/navigation";
+import { createSupabaseServerClient } from "@/lib/supabase/server";
+
+export default async function AccountPage() {
+  let isSignedIn = false;
+  try {
+    const supabase = await createSupabaseServerClient();
+    const { data: { user } } = await supabase.auth.getUser();
+    isSignedIn = Boolean(user);
+  } catch {
+    // Keep the sign-in page available when Supabase has not been configured.
+  }
+  if (isSignedIn) redirect("/dashboard");
+  return <main className="account-page"><a className="brand" href="/"><span className="brand-mark">M</span><span><b>MDB-DORC</b><small>MARKET PLACE</small></span></a><AccountForm /></main>;
+}
