@@ -19,10 +19,17 @@ export default async function Home() {
         avatarUrl: typeof (user.user_metadata?.avatar_url ?? user.user_metadata?.picture) === "string" ? user.user_metadata?.avatar_url ?? user.user_metadata?.picture : undefined,
       };
     }
-    const { data } = await db.from("products").select("id,name,description,price_ngn,stock,featured,image_path,rating,review_count,vendor_id,categories(name)").eq("status","approved").gt("stock",0).order("featured",{ascending:false}).order("created_at",{ascending:false}).limit(200);
-    if (data) {
+    const pageSize=500;
+    const data:any[]=[];
+    for(let from=0;;from+=pageSize){
+      const {data:page,error}=await db.from("products").select("id,name,description,price_ngn,stock,featured,image_path,rating,review_count,vendor_id,categories(name)").eq("status","approved").gt("stock",0).order("featured",{ascending:false}).order("created_at",{ascending:false}).range(from,from+pageSize-1);
+      if(error)throw error;
+      data.push(...(page??[]));
+      if(!page||page.length<pageSize)break;
+    }
+    if (data.length) {
       const vendorIds=[...new Set(data.map((p:any)=>p.vendor_id).filter(Boolean))];
-      const names=vendorIds.length?(await db.from("vendor_public_profiles").select("id,business_name").in("id",vendorIds)).data??[]:[];
+      const names=vendorIds.length?(await Promise.all(Array.from({length:Math.ceil(vendorIds.length/pageSize)},(_,index)=>db.from("vendor_public_profiles").select("id,business_name").in("id",vendorIds.slice(index*pageSize,(index+1)*pageSize))))).flatMap((result)=>result.data??[]):[];
       const nameById=new Map(names.map((v:any)=>[v.id,v.business_name]));
       catalog = await Promise.all(data.map(async (p: any) => { const imageUrl=p.image_path?db.storage.from("product-images").getPublicUrl(p.image_path).data.publicUrl:undefined;const categoryName=p.categories?.name??"Marketplace";const category=marketplaceCategories.find((item)=>item.name===categoryName);return { id:p.id,name:p.name,description:p.description??"",category:categoryName,price:Number(p.price_ngn),rating:Number(p.rating??0),reviews:Number(p.review_count??0),stock:Number(p.stock),seller:p.vendor_id?(nameById.get(p.vendor_id)??"DORC seller"):"MDB-DORC",emoji:category?.emoji??"🛍️",tone:category?.tone??"cat-mint",badge:p.featured?"Featured":undefined,imageUrl }; }));
     }
