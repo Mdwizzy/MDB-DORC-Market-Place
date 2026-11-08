@@ -1,5 +1,6 @@
-export type Product = { id: string; name: string; description: string; category: string; price: number; oldPrice?: number; rating: number; reviews: number; stock: number; seller: string; emoji: string; tone: string; badge?: string; imageUrl?: string };
-export const marketplaceCategories = [
+export type Product = { id: string; name: string; description: string; category: string; price: number; oldPrice?: number; rating: number; reviews: number; stock: number; seller: string; emoji: string; tone: string; badge?: string; imageUrl?: string; imageUrls?: string[] };
+export type MarketplaceCategory = { id?: string; name: string; slug: string; emoji: string; tone: string; active?: boolean };
+export const marketplaceCategories: MarketplaceCategory[] = [
   { name: "Electronics", slug: "electronics", emoji: "🎧", tone: "cat-lav" },
   { name: "Phones & Tablets", slug: "phones-tablets", emoji: "📱", tone: "cat-mint" },
   { name: "Computers & Accessories", slug: "computers-accessories", emoji: "💻", tone: "cat-lemon" },
