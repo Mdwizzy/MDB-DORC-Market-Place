@@ -79,6 +79,7 @@ button,a,input,select,textarea{-webkit-tap-highlight-color:transparent}
 
 .brand-logo{display:block;width:140px;height:32px;max-width:none;object-fit:contain;flex:none}
 @media(max-width:700px){.brand-logo{width:140px;height:32px}}
+@media(max-width:700px){.product-grid.show-all-mobile .product-card{display:block}}
 .footer-brand .brand-logo{width:140px;height:32px}
 
 .product-title{display:block;width:100%;padding:0;border:0;background:none;text-align:left;color:inherit;font:inherit;font-family:Manrope,sans-serif;font-weight:inherit;letter-spacing:inherit;cursor:pointer}.product-title:hover{color:#315f91;text-decoration:underline;text-underline-offset:2px}
