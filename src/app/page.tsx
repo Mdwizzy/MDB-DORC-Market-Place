@@ -1,17 +1,21 @@
 import Marketplace from "@/components/Marketplace";
 import { createSupabaseServerClient } from "@/lib/supabase/server";
 import { marketplaceCategories, type MarketplaceCategory, type Product } from "@/lib/products";
+import { defaultPickupLocations, type PickupLocation } from "@/lib/pickup-locations";
 
 export const dynamic = "force-dynamic";
 export default async function Home() {
   let catalog: Product[] = [];
   let categories: MarketplaceCategory[] = marketplaceCategories;
+  let pickupLocations: PickupLocation[] = defaultPickupLocations;
   let accountHref = "/account";
   let accountUser: { id: string; name: string; email: string; avatarUrl?: string } | null = null;
   try {
     const db = await createSupabaseServerClient();
     const {data:categoryRows,error:categoryError}=await db.from("categories").select("id,name,slug,emoji,tone,active").eq("active",true).order("name");
     if(!categoryError&&categoryRows?.length)categories=categoryRows;
+    const {data:pickupRows,error:pickupError}=await db.from("pickup_locations").select("id,name,active").eq("active",true).order("name");
+    if(!pickupError)pickupLocations=pickupRows??[];
     const { data: { user } } = await db.auth.getUser();
     if (user) {
       accountHref = "/dashboard";
@@ -37,5 +41,5 @@ export default async function Home() {
       catalog = await Promise.all(data.map(async (p: any) => { const imageUrls=[p.image_path,p.image_path_2].filter((path):path is string=>typeof path==="string"&&path.length>0).map((path)=>db.storage.from("product-images").getPublicUrl(path).data.publicUrl);const categoryName=p.categories?.name??"Marketplace";const category=categories.find((item)=>item.name===categoryName)??marketplaceCategories.find((item)=>item.name===categoryName);return { id:p.id,name:p.name,description:p.description??"",category:categoryName,price:Number(p.price_ngn),rating:Number(p.rating??0),reviews:Number(p.review_count??0),stock:Number(p.stock),seller:p.vendor_id?(nameById.get(p.vendor_id)??"DORC seller"):"MDB-DORC",emoji:category?.emoji??"🛍️",tone:category?.tone??"cat-mint",badge:p.featured?"Featured":undefined,imageUrl:imageUrls[0],imageUrls }; }));
     }
   } catch { /* Keep the sample catalog visible until services are configured. */ }
-  return <Marketplace initialProducts={catalog} categories={categories} accountHref={accountHref} accountUser={accountUser} />;
+  return <Marketplace initialProducts={catalog} categories={categories} pickupLocations={pickupLocations} accountHref={accountHref} accountUser={accountUser} />;
 }

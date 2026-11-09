@@ -11,10 +11,13 @@ export async function POST(request: Request) {
     if (!user?.email) return NextResponse.json({ error: "Sign in before placing an order." }, { status: 401 });
     const body = await request.json() as { items?: { productId: string; quantity: number }[]; pickupLocation?: string };
     if (!Array.isArray(body.items) || body.items.length < 1 || body.items.length > 50) return NextResponse.json({ error: "Your cart is empty or too large." }, { status: 400 });
-    if (!["E-Block", "MSB Site Office"].includes(body.pickupLocation ?? "")) return NextResponse.json({ error: "Choose a valid pickup location." }, { status: 400 });
+    if (typeof body.pickupLocation !== "string" || body.pickupLocation.length > 100) return NextResponse.json({ error: "Choose a valid pickup location." }, { status: 400 });
     const items = body.items.map(i => ({ product_id: i.productId, quantity: Number(i.quantity) }));
     if (items.some(i => !i.product_id || !Number.isInteger(i.quantity) || i.quantity < 1 || i.quantity > 25)) return NextResponse.json({ error: "One or more cart quantities are invalid." }, { status: 400 });
     const db = createSupabaseAdminClient();
+    const { data: pickupLocation, error: pickupError } = await db.from("pickup_locations").select("id").eq("name", body.pickupLocation).eq("active", true).maybeSingle();
+    if (pickupError) return NextResponse.json({ error: "Pickup locations are temporarily unavailable. Please try again shortly." }, { status: 503 });
+    if (!pickupLocation) return NextResponse.json({ error: "That pickup location is no longer available. Choose another location." }, { status: 400 });
     const { data: orderId, error } = await db.rpc("create_pending_marketplace_order", { p_customer_id: user.id, p_pickup_name: body.pickupLocation, p_items: items });
     if (error || !orderId) return NextResponse.json({ error: error?.message ?? "Could not create the order." }, { status: 400 });
     const { data: order } = await db.from("orders").select("id,total_amount").eq("id", orderId).single();
